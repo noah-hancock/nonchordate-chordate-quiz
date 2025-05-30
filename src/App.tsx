@@ -12,15 +12,25 @@ interface QuestionDataFormat {
   };
 }
 
+interface PossibleAnswersFormat {
+  [key: string]: string[];
+}
+
 const typedChordateData: QuestionDataFormat = chordateData;
 const typedNonChordateData: QuestionDataFormat = nonChordateData;
+const typedChordateAnswers: PossibleAnswersFormat = possibleAnswersForChordates;
+const typedNonChordateAnswers: PossibleAnswersFormat =
+  possibleAnswersForNonChordates;
 
 function App() {
   // useStates for settings
   const [practiceSet, setPracticeSet] = useState("");
 
   // useStates for logic
+  const [quizLoop, setQuizLoop] = useState("menu");
   const [allQuestions, setAllQuestions] = useState<string[][]>([]);
+  const [answer, setAnswer] = useState("");
+  const [possibleAnswers, setPossibleAnswers] = useState<string[][]>([]);
 
   //useStates for display
   const [currentQuestion, setCurrentQuestion] = useState("");
@@ -28,6 +38,7 @@ function App() {
   // Function that handles choosing a practice set. Starts the quiz.
   const handleChoosingPracticeSet = useCallback(
     (set: string) => {
+      setQuizLoop("playing");
       setPracticeSet(set);
     },
     [setPracticeSet]
@@ -43,7 +54,6 @@ function App() {
     let questions: string[][] = [];
     const data =
       practiceSet === "Non-Chordate" ? typedNonChordateData : typedChordateData;
-    // Check what practice set user chose
     for (const type in data) {
       for (const property in data[type]) {
         questions.push([type, property, data[type][property]]);
@@ -64,19 +74,26 @@ function App() {
 
   // This function generates and sets the current question
   const generateCurrentQuestion = useCallback(() => {
-    const [type, property] = allQuestions[0];
+    const [type, property, questionAnswer] = allQuestions[0];
+    const data =
+      practiceSet === "Non-Chordate"
+        ? typedNonChordateAnswers
+        : typedChordateAnswers;
     setCurrentQuestion(`${property} of ${type} is?`);
+    setPossibleAnswers(data[property]);
+    setAnswer(questionAnswer);
     setAllQuestions((previousQuestions) => previousQuestions.slice(1));
   }, [setCurrentQuestion, allQuestions]);
 
-  // This logic might become useful in the future
   useEffect(() => {
-    // When practice set changes, start the quiz
-    if (practiceSet !== "") {
-      shuffleAllQuestions();
+    shuffleAllQuestions();
+  }, [quizLoop]);
+
+  useEffect(() => {
+    if (quizLoop !== "menu" && quizLoop !== "results") {
       generateCurrentQuestion();
     }
-  }, [practiceSet]);
+  }, [quizLoop]);
 
   return (
     <>
@@ -92,7 +109,17 @@ function App() {
           </button>
         </>
       )}
-      {practiceSet !== "" && <p>{currentQuestion}</p>}
+      {practiceSet !== "" && (
+        <>
+          <p>{currentQuestion}</p>
+          <select>
+            {possibleAnswers &&
+              possibleAnswers.map((value) => (
+                <option value={value}>{value}</option>
+              ))}
+          </select>
+        </>
+      )}
     </>
   );
 }

@@ -11,18 +11,6 @@ export const possibleAnswersForNonChordates = {
   Molting: ["Absent", "Present"],
 };
 
-export const possibleNonChordateTypes = [
-  "Porifera",
-  "Cnidaria",
-  "Platyhelminthes",
-  "Rotifera",
-  "Annelida",
-  "Mollusca",
-  "Arthropoda",
-  "Nematoda",
-  "Echinodermata",
-];
-
 export const nonChordateData = {
   Porifera: {
     "Specialized tissues": "None",
@@ -174,18 +162,6 @@ export const possibleAnswersForChordates = {
     "Brain, sense organs",
   ],
 };
-
-export const possibleChordateTypes = [
-  "Cephalochordata",
-  "Urochordata",
-  "Agnatha",
-  "Chondrichthyes",
-  "Osteichthyes",
-  "Amphibia",
-  "Reptilia",
-  "Aves",
-  "Mammalia",
-];
 
 export const chordateData = {
   Cephalochordata: {
