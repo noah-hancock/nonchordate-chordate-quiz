@@ -30,9 +30,14 @@ function App() {
   const [quizLoop, setQuizLoop] = useState("menu");
   const [allQuestions, setAllQuestions] = useState<string[][]>([]);
   const [answer, setAnswer] = useState("");
-  const [possibleAnswers, setPossibleAnswers] = useState<string[][]>([]);
+  const [possibleAnswers, setPossibleAnswers] = useState<string[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState("");
 
-  //useStates for display
+  // useStates for scoring
+  const [incorrectScore, setIncorrectScore] = useState(0);
+  const [correctScore, setCorrectScore] = useState(0);
+
+  // useStates for display
   const [currentQuestion, setCurrentQuestion] = useState("");
 
   // Function that handles choosing a practice set. Starts the quiz.
@@ -85,6 +90,16 @@ function App() {
     setAllQuestions((previousQuestions) => previousQuestions.slice(1));
   }, [setCurrentQuestion, allQuestions]);
 
+  // Check the user's answer
+  const checkAnswer = useCallback(() => {
+    if (selectedAnswer === answer) {
+      setCorrectScore((prevScore) => prevScore + 1);
+    } else {
+      setIncorrectScore((prevScore) => prevScore + 1);
+    }
+    generateCurrentQuestion();
+  }, [generateCurrentQuestion]);
+
   useEffect(() => {
     shuffleAllQuestions();
   }, [quizLoop]);
@@ -94,6 +109,10 @@ function App() {
       generateCurrentQuestion();
     }
   }, [quizLoop]);
+
+  const handleAnswerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedAnswer(event.target.value);
+  };
 
   return (
     <>
@@ -112,12 +131,17 @@ function App() {
       {practiceSet !== "" && (
         <>
           <p>{currentQuestion}</p>
-          <select>
+          <select value={selectedAnswer} onChange={handleAnswerChange}>
             {possibleAnswers &&
               possibleAnswers.map((value) => (
                 <option value={value}>{value}</option>
               ))}
           </select>
+          <button onClick={checkAnswer}>Submit</button>
+          <p>{allQuestions.length}</p>
+          <p>
+            {correctScore} / {incorrectScore}
+          </p>
         </>
       )}
     </>
