@@ -39,10 +39,14 @@ function App() {
 
   // useStates for display
   const [currentQuestion, setCurrentQuestion] = useState("");
+  const [errorBox, setErrorBox] = useState("");
 
   // Function that handles choosing a practice set. Starts the quiz.
   const handleChoosingPracticeSet = useCallback(
     (set: string) => {
+      setErrorBox("");
+      setIncorrectScore(0);
+      setCorrectScore(0);
       setQuizLoop("playing");
       setPracticeSet(set);
     },
@@ -79,26 +83,37 @@ function App() {
 
   // This function generates and sets the current question
   const generateCurrentQuestion = useCallback(() => {
-    const [type, property, questionAnswer] = allQuestions[0];
-    const data =
-      practiceSet === "Non-Chordate"
-        ? typedNonChordateAnswers
-        : typedChordateAnswers;
-    setCurrentQuestion(`${property} of ${type} is?`);
-    setPossibleAnswers(data[property]);
-    setAnswer(questionAnswer);
-    setAllQuestions((previousQuestions) => previousQuestions.slice(1));
+    if (allQuestions.length > 0) {
+      const [type, property, questionAnswer] = allQuestions[0];
+      const data =
+        practiceSet === "Non-Chordate"
+          ? typedNonChordateAnswers
+          : typedChordateAnswers;
+      setCurrentQuestion(`${property} of ${type} is?`);
+      setPossibleAnswers(data[property]);
+      setAnswer(questionAnswer);
+      setSelectedAnswer("");
+      setAllQuestions((previousQuestions) => previousQuestions.slice(1));
+    } else {
+      setQuizLoop("results");
+    }
   }, [setCurrentQuestion, allQuestions]);
 
   // Check the user's answer
   const checkAnswer = useCallback(() => {
-    if (selectedAnswer === answer) {
-      setCorrectScore((prevScore) => prevScore + 1);
+    if (selectedAnswer !== "") {
+      if (selectedAnswer === answer) {
+        setCorrectScore((prevScore) => prevScore + 1);
+        setErrorBox("Correct!");
+      } else {
+        setIncorrectScore((prevScore) => prevScore + 1);
+        setErrorBox("Incorrect!");
+      }
+      generateCurrentQuestion();
     } else {
-      setIncorrectScore((prevScore) => prevScore + 1);
+      setErrorBox("Select an answer!");
     }
-    generateCurrentQuestion();
-  }, [generateCurrentQuestion]);
+  }, [generateCurrentQuestion, selectedAnswer, answer]);
 
   useEffect(() => {
     shuffleAllQuestions();
@@ -115,36 +130,73 @@ function App() {
   };
 
   return (
-    <>
-      {practiceSet === "" && (
+    <div className="max-w-xl px-4">
+      {quizLoop === "menu" && (
         <>
-          <h2>Non-Chordata/Chordata Quiz</h2>
-          <h3>Choose a practice set.</h3>
-          <button onClick={() => handleChoosingPracticeSet("Non-Chordate")}>
-            Non-Chordate
-          </button>
-          <button onClick={() => handleChoosingPracticeSet("Chordate")}>
-            Chordate
-          </button>
+          <div className="text-center">
+            <p className="text-3xl">Non-Chordata/Chordata Quiz</p>
+            <p className="text-gray-400 italic pb-6">Choose a practice set.</p>
+          </div>
+          <div className="flex justify-center">
+            <button onClick={() => handleChoosingPracticeSet("Non-Chordate")}>
+              Non-Chordate
+            </button>
+            <button onClick={() => handleChoosingPracticeSet("Chordate")}>
+              Chordate
+            </button>
+          </div>
         </>
       )}
-      {practiceSet !== "" && (
+      {quizLoop === "playing" && (
         <>
-          <p>{currentQuestion}</p>
-          <select value={selectedAnswer} onChange={handleAnswerChange}>
-            {possibleAnswers &&
-              possibleAnswers.map((value) => (
-                <option value={value}>{value}</option>
-              ))}
-          </select>
-          <button onClick={checkAnswer}>Submit</button>
-          <p>{allQuestions.length}</p>
-          <p>
-            {correctScore} / {incorrectScore}
+          <p className="text-2xl text-center pb-6">{currentQuestion}</p>
+          <div className="flex justify-center">
+            <select
+              value={selectedAnswer}
+              onChange={handleAnswerChange}
+              className="max-w-xs"
+            >
+              <option value="" disabled>
+                Select an answer
+              </option>
+              {possibleAnswers &&
+                possibleAnswers.map((value) => (
+                  <option value={value}>{value}</option>
+                ))}
+            </select>
+          </div>
+          <div className="py-2 flex justify-center pb-6">
+            <button onClick={() => setQuizLoop("menu")}>Go Back</button>
+            <button onClick={checkAnswer}>Submit</button>
+          </div>
+          <p className="text-center">Questions left: {allQuestions.length}</p>
+          <div>
+            <p className="text-center">
+              <span className="text-green-300">Correct: {correctScore}</span> /
+              <span className="text-red-300"> Incorrect: {incorrectScore}</span>
+            </p>
+            {errorBox && <p className="text-center">{errorBox}</p>}
+          </div>
+        </>
+      )}
+      {quizLoop === "results" && (
+        <>
+          <p className="text-center pb-6">
+            <span className="text-3xl">
+              You scored{" "}
+              {(correctScore / (correctScore + incorrectScore)) * 100}%
+            </span>
+            <br />
+            <span className="text-gray-400 italic">
+              That's {correctScore} out of {incorrectScore + correctScore}
+            </span>
           </p>
+          <div className="flex justify-center">
+            <button onClick={() => setQuizLoop("menu")}>Go Back</button>
+          </div>
         </>
       )}
-    </>
+    </div>
   );
 }
 

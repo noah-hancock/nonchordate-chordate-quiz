@@ -124,13 +124,13 @@ export const nonChordateData = {
 
 export const possibleAnswersForChordates = {
   Skeleton: [
-    "No cranium or vertebrae",
     "None",
+    "No cranium or vertebrae",
     "Cartilage, jawless, bony.",
     "Cartilage, braincase, vertebrae",
     "Bony",
   ],
-  Limbs: ["No paired fins", "None", "Paired fins", "Paired limbs"],
+  Limbs: ["None", "No paired fins", "Paired fins", "Paired limbs"],
   Respiration: ["Gills", "Lungs and skin", "Lungs"],
   "Body heat": ["Ectotherm", "Endotherm"],
   Heart: [
