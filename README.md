@@ -1,54 +1,38 @@
-# React + TypeScript + Vite
+# Non-Chordata/Chordata Quiz
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This application was made for my biology class. It was meant as a webapp to help me study all the properties of chordates and non-chordates. If you want to try it yourself, self-host it or check it out on [Vercel!](https://nonchordate-chordate-quiz.vercel.app)
 
-Currently, two official plugins are available:
+# Want to run the app?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Here's how to run the app, feel free to fork it if you need a simple base.
 
-## Expanding the ESLint configuration
+## Clone the repository
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+git clone https://github.com/noah-hancock/nonchordate-chordate-quiz.git
+cd nonchordate-chordate-quiz/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Install dependencies using `bun` or `npm`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+bun install
+```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+OR
+
+```bash
+npm install
+```
+
+## Run the local server!
+
+```bash
+bun run dev
+```
+
+OR
+
+```bash
+npm run dev
 ```
